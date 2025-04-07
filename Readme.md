@@ -1,114 +1,96 @@
-# 📘 SHL RAG Assistant
+# 🧠 SHL Product Recommendation API
 
-**SHL RAG Assistant** is an intelligent tool designed to help users find the most relevant SHL assessments based on natural language queries. It uses **web scraping**, **semantic search** (via Sentence Transformers), and **Supabase** as a backend vector database — all wrapped in a sleek **Streamlit** frontend.
-
-## 🚀 Features
-
-- 🔍 Semantic search over SHL assessments (RAG-style)
-- 🧠 Embedding-based matching using `all-MiniLM-L6-v2`
-- 📊 Structured metadata: test type, duration, adaptive, remote-compatible
-- 🌐 Streamlit frontend for user interaction
-- ⚡ Real-time filtering and matching using Supabase vector RPC
+This API provides intelligent recommendations for SHL assessments based on user queries using a Retrieval-Augmented Generation (RAG) approach. It uses semantic search over vector embeddings generated from SHL product descriptions.
 
 ---
 
-## 🧩 Tech Stack
+## 🚀 Live Demos
 
-| Component     | Tool/Library                    |
-|---------------|---------------------------------|
-| Embedding     | [`sentence-transformers`](https://www.sbert.net/) |
-| Frontend      | [`Streamlit`](https://streamlit.io/) |
-| Backend DB    | [`Supabase`](https://supabase.com/) |
-| Web Scraping  | `requests`, `beautifulsoup4`    |
-| Deployment    | Streamlit Sharing |
+- 🔍 **Streamlit Demo App** (User-facing search interface): [https://shl-troger.streamlit.app/](https://shl-troger.streamlit.app/)
+- 🔗 **API Endpoint** (FastAPI): [https://shl-api-ut7j.onrender.com](https://shl-api-ut7j.onrender.com)
+  - Interactive docs: [https://shl-api-ut7j.onrender.com/docs](https://shl-api-ut7j.onrender.com/docs)
 
 ---
 
-## 🛠️ Setup Instructions
+## 🧰 Tech Stack
 
-1. **Clone the Repository**
-   ```bash
-   git clone https://github.com/yourusername/shl-rag-assistant.git
-   cd shl-rag-assistant
-   ```
-
-2. **Install Requirements**
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-3. **Set Up `.env` File**
-
-   Create a `.env` file in the root with:
-   ```env
-   SUPABASE_URL=your-supabase-url
-   SUPABASE_SERVICE_KEY=your-supabase-service-role-key
-   ```
-
-4. **Run the Streamlit App**
-   ```bash
-   streamlit run app.py
-   ```
+- **FastAPI** – for backend API.
+- **Streamlit** – for frontend demo.
+- **Sentence Transformers** – for embedding queries and SHL products.
+- **Supabase** – as a vector database backend.
+- **Uvicorn** – as the ASGI server.
 
 ---
 
-## 🧠 How It Works
+## 📦 Installation (For Local Setup)
 
-- `scraper.py`: Crawls SHL's public product catalog and collects metadata like test types, duration, adaptive, etc.
-- `embed_and_upload.py`: Converts each scraped test into a vector embedding using `sentence-transformers` and uploads it to Supabase (`products` table).
-- `match_products` (Supabase RPC): Vector search procedure that finds semantically close results based on user input.
-- `query_assessments.py`: Queries Supabase for top matches based on similarity threshold.
-- `app.py`: Frontend in Streamlit allowing users to input natural queries and view the best-fit SHL assessments.
-
----
-
-## 📁 Folder Structure
-
-```
-.
-├── app.py                  # Streamlit frontend
-├── query_assessments.py    # Vector-based search logic
-├── scraper.py              # Web scraper for SHL assessments
-├── embed_and_upload.py     # Embeds data and pushes to Supabase
-├── individual_test_solutions.json  # Raw scraped data
-├── requirements.txt
-├── .env                    # Environment variables (not committed)
-└── README.md
+```bash
+git clone https://github.com/your-username/shl-recommendation-api
+cd shl-recommendation-api
+pip install -r requirements.txt
 ```
 
 ---
 
-## 📊 Example Query
+## ▶️ Running Locally
 
-> _"Looking for a short adaptive personality test that works remotely."_
+**Start API:**
+```bash
+uvicorn main:app --reload
+```
 
-✅ Output will show:
-- Relevant test name
-- Duration
-- Remote & Adaptive support
-- Test type
-- Direct SHL URL
-- Similarity score
-
----
-
-## ✅ To-Do / Improvements
-
-- [ ] Add user authentication or analytics tracking (optional)
-- [ ] Include summary generation for each assessment
+**Start Streamlit Frontend:**
+```bash
+streamlit run app.py
+```
 
 ---
 
-## 🙌 Acknowledgements
+## 📨 API Usage
 
-- [SHL](https://www.shl.com/) for the rich catalog of assessments
-- [Supabase](https://supabase.com/) for vector search capability
-- [Sentence Transformers](https://www.sbert.net/) for embedding magic
+**POST** `/recommend`
+
+- **Request Body:**
+```json
+{
+  "query": "Hiring for Python",
+  "threshold": 0.4,
+  "top_k": 10
+}
+```
+
+- **Response:**
+```json
+{
+  "results": [
+    {
+      "id": "50e6231d-8f64-4b66-aa39-1ad193826151",
+      "name": "Python (New)",
+      "url": "https://www.shl.com/solutions/products/product-catalog/view/python-new/",
+      "remote_testing": true,
+      "adaptive_irt": false,
+      "duration": "11 minutes",
+      "test_types": "Knowledge & Skills",
+      "similarity": 0.536763163612078
+    }
+  ]
+}
+```
+
+✅ You can also test the API at: [https://your-api-url/docs](https://your-api-url/docs)
 
 ---
 
-## 📬 Contact
+## 📌 Notes
 
-Built by **Ayush Gupta**
+- The model used is `all-MiniLM-L6-v2` from HuggingFace for fast and accurate sentence embeddings.
+- SHL product embeddings are stored in Supabase with vector indexing and similarity scoring.
+- Threshold filtering is applied to ensure relevance of results.
+
+---
+
+## 🧑‍💻 Authors
+
+- **Ayush Gupta** 
 
 ---
